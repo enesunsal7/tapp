@@ -33,7 +33,7 @@ pipeline {
                         sh 'ls -la'
                         sh 'pwd'
                         sh 'cd out'
-                        h 'pwd'
+                        sh 'pwd'
                         sh 'ls -la'
                         // Uygulamayı başlat
                         sh 'dotnet tapp.dll'
