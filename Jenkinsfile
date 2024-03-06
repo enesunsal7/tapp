@@ -1,11 +1,11 @@
 pipeline {
     agent any
-    
+    environment {
+    DOTNET_CLI_HOME = "/tmp/DOTNET_CLI_HOME"
+}
     stages {
 
-        environment {
-   HOME = '/tmp'
-} 
+
         stage('Preparation') {
             steps {
                 // Docker ajanına git
