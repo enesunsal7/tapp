@@ -1,39 +1,34 @@
 pipeline {
-    agent {
-        docker {
-            image 'mcr.microsoft.com/dotnet/sdk:8.0'
-        }
-    }
-
+    agent any
+    
     stages {
         stage('Preparation') {
             steps {
-                // Preparation steps such as restoring dependencies
-                sh 'dotnet restore'
+                // Docker ajanına git
+                script {
+                    docker.image('mcr.microsoft.com/dotnet/sdk:8.0').inside('-v $PWD:/app') {
+                        // Uygulama dizinine gidin
+                        sh 'cd /app'
+                        // Gerekli dosyaları kopyala ve bağımlılıkları yükle
+                        sh 'dotnet restore'
+                        // Uygulamayı derle
+                        sh 'dotnet publish tapp.csproj -c Release -o out'
+                    }
+                }
             }
         }
         
-        stage('Build') {
+        stage('Deployment') {
             steps {
-                // Building the .NET application
-                sh 'dotnet build'
-            }
-        }
-        
-        stage('Publish') {
-            steps {
-                // Publishing the .NET application
-                sh 'dotnet publish tapp.csproj -c Release -o out'
-            }
-        }
-        
-        stage('Deploy') {
-            steps {
-                // Setting up environment variable
-                sh 'export ASPNETCORE_URLS="http://*:1453"'
-                
-                // Running the .NET application
-                sh 'dotnet out/tapp.dll'
+                // Docker ajanına git
+                script {
+                    docker.image('mcr.microsoft.com/dotnet/sdk:8.0').inside('-v $PWD:/app') {
+                        // Çıktı dizinine git
+                        sh 'cd /app/out'
+                        // Uygulamayı başlat
+                        sh 'dotnet tapp.dll'
+                    }
+                }
             }
         }
     }
