@@ -1,24 +1,18 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'mcr.microsoft.com/dotnet/sdk:8.0'
+        }
+    }
 
     stages {
-         stage('Preparation') {
+        stage('Preparation') {
             steps {
-
-                sh  'FROM mcr.microsoft.com/dotnet/sdk:8.0'
-                // Installing required packages
+                // Preparation steps such as restoring dependencies
                 sh 'dotnet restore'
-                
-                // Code inspection and quality control
-                sh 'dotnet analyze'
-                
-                // Updating dependencies
-                sh 'dotnet nuget update --self'
-                
-                // Running preparation tests
-                sh 'dotnet test'
             }
         }
+        
         stage('Build') {
             steps {
                 // Building the .NET application
@@ -26,26 +20,21 @@ pipeline {
             }
         }
         
-        stage('Package') {
+        stage('Publish') {
             steps {
-                // Packaging .NET application into a Docker container
-                sh 'docker build -t tappjenkins:v1 .'
+                // Publishing the .NET application
+                sh 'dotnet publish tapp.csproj -c Release -o out'
             }
         }
         
-        stage('Deploy to Private Registry') {
+        stage('Deploy') {
             steps {
-                // Log in to the private Docker registry
-                sh 'docker login -u master -p Password1 http://registry.enes.local:5000'
+                // Setting up environment variable
+                sh 'export ASPNETCORE_URLS="http://*:1453"'
                 
-                // Tagging the Docker image
-                sh 'docker tag tappjenkins:v1 http://registry.enes.local:5000/tappjenkins:v1'
-                
-                // Pushing the Docker image to the private registry
-                sh 'docker push http://registry.enes.local:5000/tappjenkins:v1'
+                // Running the .NET application
+                sh 'dotnet out/tapp.dll'
             }
         }
-        
-        // Other stages can be added here
     }
 }
