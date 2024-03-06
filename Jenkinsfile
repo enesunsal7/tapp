@@ -2,7 +2,23 @@ pipeline {
     agent any
 
     stages {
-        
+         stage('Preparation') {
+            steps {
+
+                sh  'FROM mcr.microsoft.com/dotnet/sdk:8.0'
+                // Installing required packages
+                sh 'dotnet restore'
+                
+                // Code inspection and quality control
+                sh 'dotnet analyze'
+                
+                // Updating dependencies
+                sh 'dotnet nuget update --self'
+                
+                // Running preparation tests
+                sh 'dotnet test'
+            }
+        }
         stage('Build') {
             steps {
                 // Building the .NET application
