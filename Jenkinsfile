@@ -2,6 +2,10 @@ pipeline {
     agent any
     
     stages {
+
+        environment {
+   HOME = '/tmp'
+} 
         stage('Preparation') {
             steps {
                 // Docker ajanına git
