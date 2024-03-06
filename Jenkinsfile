@@ -17,6 +17,8 @@ pipeline {
                         sh 'dotnet restore'
                         // Uygulamayı derle
                         sh 'dotnet publish tapp.csproj -c Release -o out'
+                        sh 'ls -la'
+                        sh 'pwd'
                     }
                 }
             }
