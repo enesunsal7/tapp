@@ -2,12 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Preparation') {
-            steps {
-                // Preparation steps such as restoring dependencies, analyzing code, running tests
-                // ...
-            }
-        }
         
         stage('Build') {
             steps {
