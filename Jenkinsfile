@@ -30,7 +30,10 @@ pipeline {
                 script {
                     docker.image('mcr.microsoft.com/dotnet/sdk:8.0').inside('-v $PWD:/app') {
                         // Çıktı dizinine git
-                        sh 'cd /out'
+                        sh 'ls -la'
+                        sh 'pwd'
+                        sh 'cd out'
+                        h 'pwd'
                         sh 'ls -la'
                         // Uygulamayı başlat
                         sh 'dotnet tapp.dll'
